@@ -1,5 +1,7 @@
 package com.example.demofx1.model;
 
+import javafx.scene.control.Alert;
+
 import java.util.Random;
 
 public class SnakeGame {
@@ -40,6 +42,13 @@ public class SnakeGame {
     public void tick() {
         if (running) {
             snake.move();
+            if (snake.isOut() || snake.isEatItself()) {
+                running = false;
+                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Game over!");
+                alert.setTitle("Snake game");
+                alert.setHeaderText(null);
+                alert.show();
+            }
         }
     }
 
