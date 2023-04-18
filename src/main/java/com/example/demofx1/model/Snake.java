@@ -20,16 +20,10 @@ public class Snake {
         direction = Direction.UP;
     }
 
-    public boolean contains(Apple apple) {
-        // TODO do check apple in snake
-        return false;
-    }
-
-    public void move() {
+    public Element move() {
         body.addFirst(head);
         head = direction.next(head);
-        // TODO check if apple was eaten
-        body.removeLast();
+        return body.removeLast();
     }
 
     public void setDirection(Direction direction) {
@@ -50,5 +44,13 @@ public class Snake {
 
     public boolean isEatItself() {
         return body.stream().anyMatch(e -> e.equals(head));
+    }
+
+    public boolean eat(Apple apple) {
+        return head.getX() == apple.getX() && head.getY() == apple.getY();
+    }
+
+    public void grow(Element e) {
+        body.addLast((SnakeElement) e);
     }
 }

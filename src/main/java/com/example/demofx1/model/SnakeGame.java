@@ -1,7 +1,10 @@
 package com.example.demofx1.model;
 
+import com.example.demofx1.view.View;
 import javafx.scene.control.Alert;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class SnakeGame {
@@ -16,15 +19,22 @@ public class SnakeGame {
 
     private Apple apple;
 
+    private List<View> views = new ArrayList<>();
+
     public SnakeGame() {
         snake = new Snake(5);
-        newApple(snake);
+        newApple();
     }
 
-    private void newApple(Snake snake) {
+    private void newApple() {
         do {
             apple = new Apple(random.nextInt(SIZE_XY), random.nextInt(SIZE_XY));
-        } while (snake.contains(apple));
+        } while (snakeContains(apple));
+    }
+
+    private boolean snakeContains(Apple apple) {
+        if (snake.eat(apple)) return true;
+        return snake.getBody().stream().anyMatch(e -> e.getX() == apple.getX() && e.getY() == apple.getY());
     }
 
     public void start() {
@@ -41,7 +51,11 @@ public class SnakeGame {
 
     public void tick() {
         if (running) {
-            snake.move();
+            Element e = snake.move();
+            if (snake.eat(apple)) {
+                snake.grow(e);
+                newApple();
+            }
             if (snake.isOut() || snake.isEatItself()) {
                 running = false;
                 Alert alert = new Alert(Alert.AlertType.INFORMATION, "Game over!");
@@ -49,6 +63,7 @@ public class SnakeGame {
                 alert.setHeaderText(null);
                 alert.show();
             }
+            views.forEach(View::update);
         }
     }
 
@@ -58,5 +73,9 @@ public class SnakeGame {
 
     public void turnSnake(Direction direction) {
         snake.setDirection(direction);
+    }
+
+    public void registerView(View view) {
+        views.add(view);
     }
 }

@@ -3,11 +3,13 @@ package com.example.demofx1;
 import com.example.demofx1.model.Direction;
 import com.example.demofx1.model.SnakeGame;
 import com.example.demofx1.view.GameView;
+import com.example.demofx1.view.View;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
@@ -16,26 +18,28 @@ import javafx.util.Duration;
 public class GameController {
 
     @FXML
+    private Label score;
+    @FXML
     private Pane pane;
     @FXML
     private Canvas canvas;
 
-    private Timeline timeline;
-
     private SnakeGame game;
-    private GameView view;
 
     public void initialize() {
         canvas.widthProperty().bind(pane.widthProperty());
         canvas.heightProperty().bind(pane.heightProperty());
 
-        canvas.widthProperty().addListener(evt -> view.draw());
-        canvas.heightProperty().addListener(evt -> view.draw());
-
         game = new SnakeGame();
-        view = new GameView(game, canvas);
+        View view = new GameView(game, canvas);
+        View scoreView = new ScoreView(game, score);
+        game.registerView(view);
+        game.registerView(scoreView);
 
-        timeline = new Timeline(new KeyFrame(Duration.millis(500), e -> processTick()));
+        canvas.widthProperty().addListener(evt -> view.update());
+        canvas.heightProperty().addListener(evt -> view.update());
+
+        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(500), e -> processTick()));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
         pane.requestFocus();
@@ -43,7 +47,6 @@ public class GameController {
 
     public void processTick() {
         game.tick();
-        view.draw();
     }
 
     public void processKey(KeyEvent keyEvent) {

@@ -6,7 +6,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 
-public class GameView {
+public class GameView implements View {
 
     public final static int CELL_SIZE = 15;
 
@@ -70,5 +70,10 @@ public class GameView {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.setFill(Color.WHITESMOKE);
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+    }
+
+    @Override
+    public void update() {
+        draw();
     }
 }
